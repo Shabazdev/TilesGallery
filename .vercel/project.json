@@ -1,13 +1,1 @@
-{
-  "settings": {
-    "createdAt": 1788458711646,
-    "framework": "vite",
-    "devCommand": null,
-    "installCommand": null,
-    "buildCommand": null,
-    "outputDirectory": "dist",
-    "rootDirectory": null,
-    "directoryListing": false,
-    "nodeVersion": "24.x"
-  }
-}
+{"projectId":"prj_CONeYcXGO2k5HX1DGBu4AbdPSRSf","orgId":"team_281tfxifcjsR4xLBNG1ty7n2","projectName":"tiles-gallery"}

@@ -1,16 +1,29 @@
 import https from 'https';
 
+const BASE = 'https://tiles-gallery-pearl.vercel.app';
 const urls = [
-  'https://tiles-gallery-pearl.vercel.app/api/auth/status',
-  'https://tiles-gallery-pearl.vercel.app/api/auth/session',
-  'https://tiles-gallery-pearl.vercel.app/api/auth/google/url?origin=https://tiles-gallery-pearl.vercel.app',
-  'https://tiles-gallery-pearl.vercel.app/api/tiles',
-  'https://tiles-gallery-pearl.vercel.app/',
+  `${BASE}/api/auth/status`,
+  `${BASE}/api/auth/session`,
+  `${BASE}/api/auth/google/url?origin=${BASE}`,
+  `${BASE}/api/tiles`,
+  `${BASE}/`,
 ];
 
-for (const url of urls) {
-  await new Promise((resolve) => {
+function fetchUrl(url, redirectCount = 0) {
+  return new Promise((resolve) => {
+    if (redirectCount > 5) {
+      console.log('URL:', url, 'Error: Too many redirects');
+      console.log('---');
+      resolve(null);
+      return;
+    }
     https.get(url, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        const redirectUrl = new URL(res.headers.location, url).href;
+        console.log('URL:', url, '-> Redirect to:', redirectUrl);
+        fetchUrl(redirectUrl, redirectCount + 1).then(() => resolve(null));
+        return;
+      }
       let body = '';
       res.on('data', (c) => body += c);
       res.on('end', () => {
@@ -28,4 +41,8 @@ for (const url of urls) {
       resolve(null);
     });
   });
+}
+
+for (const url of urls) {
+  await fetchUrl(url);
 }
