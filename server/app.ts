@@ -1,11 +1,12 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 // Tiles are imported statically so the dataset is bundled with the code.
 // This is required for serverless deployment (Vercel) where runtime file
 // access to the project directory is not guaranteed.
-import tilesJson from '../data/tiles.json';
+import tilesJson from '../data/tiles.json' with { type: 'json' };
 
 // Helper to sanitize environment variable strings
 function cleanEnv(val?: string): string {
