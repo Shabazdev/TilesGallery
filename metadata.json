@@ -1,0 +1,6 @@
+{
+  "name": "Tiles Gallery",
+  "description": "A modern website for showcasing, searching, and exploring premium tiles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
