@@ -3,6 +3,22 @@ import { User, AuthContextType } from '../types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Safely parse a JSON response. If the server returns non-JSON (e.g. an HTML
+// error page or plain-text "A server error has occurred" from a crashed
+// serverless function), this throws a clear error instead of the cryptic
+// "Unexpected token < in JSON" that res.json() would produce.
+async function safeJsonParse(res: Response): Promise<any> {
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    const text = await res.text();
+    throw new Error(
+      `Expected JSON response but received ${contentType || 'unknown content-type'} ` +
+      `(HTTP ${res.status}). Body preview: ${text.substring(0, 200)}`
+    );
+  }
+  return res.json();
+}
+
 const LOCAL_STORAGE_USER_KEY = 'tiles_gallery_user';
 const LOCAL_STORAGE_TOKEN_KEY = 'tiles_gallery_token';
 
@@ -56,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
+      const data = await safeJsonParse(res);
       if (!res.ok) {
         return { success: false, error: data.error || 'Failed to sign in' };
       }
@@ -89,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         body: JSON.stringify({ name, email, password, image }),
       });
 
-      const data = await res.json();
+      const data = await safeJsonParse(res);
       if (!res.ok) {
         return { success: false, error: data.error || 'Registration failed' };
       }
@@ -124,7 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       try {
         const res = await fetch(authUrlEndpoint);
-        data = await res.json();
+        data = await safeJsonParse(res);
 
         if (!res.ok || !data.configured || !data.url) {
           if (popup && !popup.closed) popup.close();
@@ -281,7 +297,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         body: JSON.stringify(data),
       });
 
-      const resData = await res.json();
+      const resData = await safeJsonParse(res);
       if (!res.ok) {
         throw new Error(resData.error || 'Failed to update profile');
       }
