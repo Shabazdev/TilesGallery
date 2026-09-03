@@ -9,6 +9,6 @@
  *
  * The same Express app also powers local development (npm run dev) via server.ts.
  */
-import app from '../server/app';
+import app from '../server/app.js';
 
 export default app;
