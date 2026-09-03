@@ -32,7 +32,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Tiles Gallery Server running on http://localhost:${PORT}`);
+    console.log(`Tiles Gallery Server running on https://tiles-gallery-pearl.vercel.app/:${PORT}`);
   });
 }
 
